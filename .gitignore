@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+*.pyo
+.env
+.venv/
+env/
+venv/
+extracted_media/
+De_bai_Xay_dung_trang_Thu_vien_bao_cao.xlsx
+.DS_Store
+
+.vercel

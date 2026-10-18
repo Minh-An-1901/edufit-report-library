@@ -1,0 +1,166 @@
+{
+  "groups": [
+    {
+      "id": "TDS",
+      "name": "TDS",
+      "color": "#4f46e5"
+    },
+    {
+      "id": "SKR",
+      "name": "SKR",
+      "color": "#e0527a"
+    },
+    {
+      "id": "ASC",
+      "name": "ASC",
+      "color": "#f0842c"
+    },
+    {
+      "id": "TN",
+      "name": "TN",
+      "color": "#22a06b"
+    }
+  ],
+  "menus": [
+    {
+      "order": 1,
+      "title": "Thư viện báo cáo",
+      "icon": "pie-chart",
+      "path": "/thu-vien-bao-cao"
+    },
+    {
+      "order": 2,
+      "title": "Phân rã KPI",
+      "icon": "table",
+      "path": "/phan-ra-kpi"
+    },
+    {
+      "order": 3,
+      "title": "Giao KPI",
+      "icon": "scan",
+      "path": "/giao-kpi"
+    },
+    {
+      "order": 4,
+      "title": "Danh sách COI",
+      "icon": "id-badge",
+      "path": "/danh-sach-coi"
+    },
+    {
+      "order": 5,
+      "title": "Quản lý học sinh",
+      "icon": "graduation-cap",
+      "path": "/hoc-sinh"
+    }
+  ],
+  "reports": [
+    {
+      "id": "R01",
+      "title": "Báo cáo hành vi then chốt",
+      "group": "TDS",
+      "color": "#1e88e5",
+      "seed": 3.0,
+      "updated_at": "28/09/2026",
+      "embed_url": "https://bi.example.vn/embed/R01"
+    },
+    {
+      "id": "R02",
+      "title": "Giám sát thông lệ chăm sóc lead",
+      "group": "TDS",
+      "color": "#fbb12d",
+      "seed": 7.0,
+      "updated_at": "02/10/2026",
+      "embed_url": "https://bi.example.vn/embed/R02"
+    },
+    {
+      "id": "R03",
+      "title": "Báo cáo quản trị",
+      "group": "TDS",
+      "color": "#546e7a",
+      "seed": 11.0,
+      "updated_at": "15/09/2026",
+      "embed_url": "https://bi.example.vn/embed/R03"
+    },
+    {
+      "id": "R04",
+      "title": "Báo cáo phễu tuyển sinh SKR",
+      "group": "SKR",
+      "color": "#e0527a",
+      "seed": 5.0,
+      "updated_at": "08/10/2026",
+      "embed_url": "https://bi.example.vn/embed/R04"
+    },
+    {
+      "id": "R05",
+      "title": "Giám sát tiến độ nhập học",
+      "group": "SKR",
+      "color": "#8e44ad",
+      "seed": 9.0,
+      "updated_at": "06/10/2026",
+      "embed_url": "https://bi.example.vn/embed/R05"
+    },
+    {
+      "id": "R06",
+      "title": "Doanh thu học phí theo cơ sở",
+      "group": "SKR",
+      "color": "#00897b",
+      "seed": 2.0,
+      "updated_at": "30/09/2026",
+      "embed_url": "https://bi.example.vn/embed/R06"
+    },
+    {
+      "id": "R07",
+      "title": "Hiệu quả kênh đối tác",
+      "group": "SKR",
+      "color": "#3949ab",
+      "seed": 13.0,
+      "updated_at": "21/08/2026",
+      "embed_url": "https://bi.example.vn/embed/R07"
+    },
+    {
+      "id": "R08",
+      "title": "Báo cáo vận hành ASC",
+      "group": "ASC",
+      "color": "#f0842c",
+      "seed": 4.0,
+      "updated_at": "01/10/2026",
+      "embed_url": "https://bi.example.vn/embed/R08"
+    },
+    {
+      "id": "R09",
+      "title": "Doanh thu khóa ngoại khóa",
+      "group": "ASC",
+      "color": "#d81b60",
+      "seed": 8.0,
+      "updated_at": "19/09/2026",
+      "embed_url": "https://bi.example.vn/embed/R09"
+    },
+    {
+      "id": "R10",
+      "title": "Giám sát chuyên cần",
+      "group": "ASC",
+      "color": "#455a64",
+      "seed": 6.0,
+      "updated_at": "30/07/2026",
+      "embed_url": "https://bi.example.vn/embed/R10"
+    },
+    {
+      "id": "R11",
+      "title": "Báo cáo tuyển sinh TN",
+      "group": "TN",
+      "color": "#22a06b",
+      "seed": 10.0,
+      "updated_at": "09/10/2026",
+      "embed_url": "https://bi.example.vn/embed/R11"
+    },
+    {
+      "id": "R12",
+      "title": "Theo dõi chăm sóc phụ huynh",
+      "group": "TN",
+      "color": "#1e88e5",
+      "seed": 12.0,
+      "updated_at": "12/06/2026",
+      "embed_url": "https://bi.example.vn/embed/R12"
+    }
+  ]
+}
