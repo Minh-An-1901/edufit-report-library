@@ -859,8 +859,97 @@
       font-weight: 600;
       color: var(--text-muted);
       transition: var(--transition-fast);
+      cursor: pointer;
     }
     .copy-link-btn:hover { border-color: var(--primary); color: var(--primary); }
+
+    .edit-btn-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--primary);
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+    .edit-btn-action:hover {
+      background-color: var(--primary-light);
+      border-color: var(--primary);
+    }
+
+    .delete-btn-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background-color: var(--card-bg);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: var(--radius-md);
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #ef4444;
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+    .delete-btn-action:hover {
+      background-color: #fef2f2;
+      border-color: #ef4444;
+    }
+
+    /* Quick actions trên thẻ card */
+    .card-quick-actions {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      display: flex;
+      gap: 6px;
+      opacity: 0;
+      transition: opacity var(--transition-fast), transform var(--transition-fast);
+      transform: translateY(-2px);
+      z-index: 5;
+    }
+    .report-card:hover .card-quick-actions,
+    .report-card:focus-within .card-quick-actions {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .card-action-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-sm);
+      background: var(--surface-bg);
+      border: 1px solid var(--card-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: var(--transition-fast);
+      box-shadow: var(--shadow-sm);
+    }
+    .card-action-icon.edit-icon:hover {
+      color: var(--primary);
+      border-color: var(--primary);
+      background: var(--primary-light);
+      transform: scale(1.08);
+    }
+    .card-action-icon.delete-icon:hover {
+      color: #ef4444;
+      border-color: #ef4444;
+      background: #fef2f2;
+      transform: scale(1.08);
+    }
+    .list-btn-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-right: 8px;
+    }
 
     .detail-header-card {
       background: var(--card-bg);
@@ -1377,13 +1466,16 @@
     <div class="modal-card">
       <div class="modal-header">
         <div style="display:flex; align-items:center; gap:8px;">
-          <div class="modal-icon-badge">+</div>
-          <h2 class="modal-title">Thêm Báo Cáo Mới</h2>
+          <div class="modal-icon-badge" id="modalIconBadge">+</div>
+          <h2 class="modal-title" id="modalFormTitle">Thêm Báo Cáo Mới</h2>
         </div>
         <button class="modal-close-btn" id="closeAddModalBtn" aria-label="Đóng">&times;</button>
       </div>
 
       <form id="addReportForm" class="modal-form">
+        <input type="hidden" id="formMode" value="create">
+        <input type="hidden" id="editingReportId" value="">
+
         <div class="form-group">
           <label class="form-label">Tên báo cáo <span style="color:#ef4444;">*</span></label>
           <input type="text" id="newReportTitle" class="form-input" placeholder="Ví dụ: Báo cáo tuyển dụng nhân sự quý 4" required>
@@ -1432,8 +1524,8 @@
 
         <div class="modal-footer">
           <button type="button" class="btn-cancel" id="cancelAddBtn">Hủy</button>
-          <button type="submit" class="btn-submit">
-            <span>Lưu & Hiển thị ngay</span>
+          <button type="submit" class="btn-submit" id="modalSubmitBtn">
+            <span id="modalSubmitText">Lưu & Hiển thị ngay</span>
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
           </button>
         </div>
@@ -1450,7 +1542,7 @@
   <script>
     const APP_DATA = {{ initial_data | tojson | safe }};
 
-    // Hợp nhất dữ liệu cấu hình gốc và dữ liệu thêm mới từ localStorage
+    // Hợp nhất dữ liệu cấu hình gốc và dữ liệu thêm/sửa/xóa từ localStorage
     function loadMergedData() {
       let groups = [...(APP_DATA.groups || [])];
       let reports = [...(APP_DATA.reports || [])];
@@ -1461,15 +1553,28 @@
           if (!groups.some(g => g.id.toUpperCase() === sg.id.toUpperCase())) groups.push(sg);
         });
 
-        const savedReports = JSON.parse(localStorage.getItem('kpi_custom_reports') || '[]');
-        savedReports.forEach(sr => {
-          if (!reports.some(r => r.id.toUpperCase() === sr.id.toUpperCase())) reports.push(sr);
-        });
+        const allReports = localStorage.getItem('kpi_all_reports');
+        if (allReports) {
+          reports = JSON.parse(allReports);
+        } else {
+          const savedReports = JSON.parse(localStorage.getItem('kpi_custom_reports') || '[]');
+          savedReports.forEach(sr => {
+            if (!reports.some(r => r.id.toUpperCase() === sr.id.toUpperCase())) reports.push(sr);
+          });
+        }
       } catch (e) {
         console.warn('Lỗi đọc localStorage:', e);
       }
 
       return { groups, reports };
+    }
+
+    function saveReportsToStorage() {
+      try {
+        localStorage.setItem('kpi_all_reports', JSON.stringify(state.reports));
+      } catch (e) {
+        console.warn('Lỗi lưu localStorage:', e);
+      }
     }
 
     const initialMerged = loadMergedData();
@@ -1779,6 +1884,14 @@
               <div class="report-card" tabindex="0" role="button" onclick="openReportDetail('${r.id}')" onkeydown="handleCardKeydown(event, '${r.id}')">
                 <div class="card-thumbnail">
                   ${generateThumbnailSvg(r.color, r.seed)}
+                  <div class="card-quick-actions" onclick="event.stopPropagation()">
+                    <button class="card-action-icon edit-icon" title="Chỉnh sửa báo cáo" onclick="openEditModal('${r.id}')">
+                      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                    <button class="card-action-icon delete-icon" title="Xóa báo cáo" onclick="deleteReport('${r.id}')">
+                      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                    </button>
+                  </div>
                 </div>
                 <div class="card-body">
                   <span class="card-tag" style="background-color: ${r.color}15; color: ${r.color}">
@@ -1811,6 +1924,14 @@
                   </div>
                 </div>
                 <div class="list-action-btn">
+                  <div class="list-btn-group" onclick="event.stopPropagation()">
+                    <button class="card-action-icon edit-icon" title="Chỉnh sửa báo cáo" onclick="openEditModal('${r.id}')">
+                      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                    <button class="card-action-icon delete-icon" title="Xóa báo cáo" onclick="deleteReport('${r.id}')">
+                      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                    </button>
+                  </div>
                   <span>Xem báo cáo</span>
                   <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </div>
@@ -1856,10 +1977,22 @@
               <span>Quay lại Thư viện</span>
             </button>
 
-            <button class="copy-link-btn" onclick="copyCurrentReportLink('${report.id}')">
-              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-              <span>Sao chép liên kết</span>
-            </button>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <button class="copy-link-btn" onclick="copyCurrentReportLink('${report.id}')">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                <span>Sao chép liên kết</span>
+              </button>
+
+              <button class="edit-btn-action" onclick="openEditModal('${report.id}')" title="Chỉnh sửa thông tin báo cáo">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                <span>Sửa báo cáo</span>
+              </button>
+
+              <button class="delete-btn-action" onclick="deleteReport('${report.id}')" title="Xóa báo cáo này">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                <span>Xóa</span>
+              </button>
+            </div>
           </div>
 
           <div class="detail-header-card">
@@ -2274,10 +2407,22 @@
       renderContent();
     }
 
-    // Quản lý Modal Thêm báo cáo mới (In-app Add Report)
+    // Quản lý Modal Thêm / Sửa báo cáo (In-app Add & Edit Report)
     function openAddModal() {
       const modal = document.getElementById('addReportModal');
       if (!modal) return;
+
+      // Đặt chế độ Tạo mới (Create)
+      document.getElementById('formMode').value = 'create';
+      document.getElementById('editingReportId').value = '';
+      document.getElementById('modalFormTitle').textContent = 'Thêm Báo Cáo Mới';
+      document.getElementById('modalIconBadge').textContent = '+';
+      document.getElementById('modalSubmitText').textContent = 'Lưu & Hiển thị ngay';
+
+      const idInput = document.getElementById('newReportId');
+      idInput.readOnly = false;
+      idInput.style.opacity = '1';
+      idInput.style.cursor = 'text';
 
       // Tự động tính mã báo cáo tiếp theo (Ví dụ: R13 hoặc R14...)
       let maxNum = 0;
@@ -2289,7 +2434,7 @@
         }
       });
       const nextId = 'R' + String(maxNum + 1).padStart(2, '0');
-      document.getElementById('newReportId').value = nextId;
+      idInput.value = nextId;
 
       // Điền danh sách nhóm phòng ban động
       const groupSelect = document.getElementById('newReportGroup');
@@ -2323,14 +2468,96 @@
       }, 60);
     }
 
+    function openEditModal(reportId) {
+      const report = state.reports.find(r => r.id.toUpperCase() === reportId.toUpperCase());
+      if (!report) {
+        showToast('Không tìm thấy báo cáo để chỉnh sửa!');
+        return;
+      }
+
+      const modal = document.getElementById('addReportModal');
+      if (!modal) return;
+
+      // Đặt chế độ Sửa (Edit)
+      document.getElementById('formMode').value = 'edit';
+      document.getElementById('editingReportId').value = report.id;
+      document.getElementById('modalFormTitle').textContent = `Chỉnh Sửa Báo Cáo [${report.id}]`;
+      document.getElementById('modalIconBadge').textContent = '✎';
+      document.getElementById('modalSubmitText').textContent = 'Cập nhật thay đổi';
+
+      const idInput = document.getElementById('newReportId');
+      idInput.value = report.id;
+      idInput.readOnly = true;
+      idInput.style.opacity = '0.7';
+      idInput.style.cursor = 'not-allowed';
+
+      // Điền danh sách nhóm phòng ban
+      const groupSelect = document.getElementById('newReportGroup');
+      if (groupSelect) {
+        let optHtml = '';
+        state.groups.forEach(g => {
+          const sel = g.id.toUpperCase() === report.group.toUpperCase() ? 'selected' : '';
+          optHtml += `<option value="${g.id}" ${sel}>${g.name} (${g.id})</option>`;
+        });
+        optHtml += `<option value="__NEW__">+ Tạo nhóm phòng ban mới...</option>`;
+        groupSelect.innerHTML = optHtml;
+      }
+
+      // Điền thông tin báo cáo
+      document.getElementById('newReportTitle').value = report.title;
+      document.getElementById('newReportDate').value = report.updated_at;
+      document.getElementById('newReportSeed').value = report.seed;
+      document.getElementById('newReportEmbed').value = report.embed_url;
+      document.getElementById('customGroupName').value = '';
+      document.getElementById('customGroupFields').style.display = 'none';
+
+      modal.classList.add('show');
+      setTimeout(() => {
+        const titleInput = document.getElementById('newReportTitle');
+        if (titleInput) {
+          titleInput.focus();
+          titleInput.select();
+        }
+      }, 60);
+    }
+
+    function deleteReport(reportId) {
+      const report = state.reports.find(r => r.id.toUpperCase() === reportId.toUpperCase());
+      if (!report) return;
+
+      if (!confirm(`Bạn có chắc chắn muốn xóa báo cáo:\n"${report.title}" (Mã: ${report.id})?\n\nLưu ý: Có thể khôi phục lại bất kỳ lúc nào bằng nút "Đặt lại 12 báo cáo gốc" trong menu Demo Lab.`)) {
+        return;
+      }
+
+      // Xóa khỏi danh sách state
+      state.reports = state.reports.filter(r => r.id.toUpperCase() !== report.id.toUpperCase());
+
+      // Lưu cập nhật vào localStorage
+      saveReportsToStorage();
+
+      // Gửi API xóa backend nếu chạy local server
+      fetch(`/api/reports/${report.id}`, { method: 'DELETE' }).catch(() => {});
+
+      showToast(`🗑️ Đã xóa báo cáo ${report.id} thành công!`);
+
+      // Nếu đang ở trang chi tiết của báo cáo bị xóa, quay về thư viện
+      if (state.currentPath.includes(report.id)) {
+        navigate('/thu-vien-bao-cao');
+      } else {
+        renderGroupTags();
+        renderContent();
+      }
+    }
+
     function closeAddModal() {
       const modal = document.getElementById('addReportModal');
       if (modal) modal.classList.remove('show');
     }
 
     function resetToDefaultData() {
-      if (!confirm('Bạn có chắc chắn muốn đặt lại danh sách báo cáo mặc định (xóa các báo cáo tự thêm lưu trên trình duyệt)?')) return;
+      if (!confirm('Bạn có chắc chắn muốn đặt lại danh sách báo cáo mặc định (xóa mọi chỉnh sửa/thêm mới và khôi phục 12 báo cáo gốc)?')) return;
       try {
+        localStorage.removeItem('kpi_all_reports');
         localStorage.removeItem('kpi_custom_reports');
         localStorage.removeItem('kpi_custom_groups');
       } catch (e) {}
@@ -2338,7 +2565,7 @@
       state.reports = [...(APP_DATA.reports || [])];
       renderGroupTags();
       renderContent();
-      showToast('Đã khôi phục danh sách báo cáo mặc định ban đầu!');
+      showToast('Đã khôi phục danh sách 12 báo cáo mặc định ban đầu!');
     }
 
     // -------------------------------------------------------------
@@ -2568,6 +2795,8 @@
       if (addReportForm) {
         addReportForm.addEventListener('submit', (e) => {
           e.preventDefault();
+          const mode = document.getElementById('formMode').value;
+          const editingId = document.getElementById('editingReportId').value;
           const title = document.getElementById('newReportTitle').value.trim();
           let groupId = newGroupSelect.value;
           const reportId = document.getElementById('newReportId').value.trim().toUpperCase();
@@ -2580,10 +2809,12 @@
             return;
           }
 
-          // Kiểm tra trùng mã ID
-          if (state.reports.some(r => r.id.toUpperCase() === reportId)) {
-            showToast(`Mã báo cáo "${reportId}" đã tồn tại! Vui lòng chọn mã khác.`);
-            return;
+          if (mode === 'create') {
+            // Kiểm tra trùng mã ID khi tạo mới
+            if (state.reports.some(r => r.id.toUpperCase() === reportId)) {
+              showToast(`Mã báo cáo "${reportId}" đã tồn tại! Vui lòng chọn mã khác.`);
+              return;
+            }
           }
 
           let reportColor = '#4f46e5';
@@ -2625,46 +2856,65 @@
             if (foundG) reportColor = foundG.color;
           }
 
-          const newReport = {
-            id: reportId,
-            title: title,
-            group: groupId,
-            color: reportColor,
-            seed: seedVal,
-            updated_at: dateStr || '18/10/2026',
-            embed_url: embedUrl
-          };
+          if (mode === 'edit') {
+            // CẬP NHẬT BÁO CÁO (UPDATE)
+            const targetIdx = state.reports.findIndex(r => r.id.toUpperCase() === editingId.toUpperCase());
+            if (targetIdx >= 0) {
+              state.reports[targetIdx] = {
+                ...state.reports[targetIdx],
+                title: title,
+                group: groupId,
+                color: reportColor,
+                seed: seedVal,
+                updated_at: dateStr || state.reports[targetIdx].updated_at,
+                embed_url: embedUrl
+              };
 
-          // 1. Cập nhật state runtime
-          state.reports.push(newReport);
+              // Lưu vào localStorage
+              saveReportsToStorage();
 
-          // 2. Lưu vào trình duyệt (localStorage) để duy trì vĩnh viễn (kể cả F5 trên Vercel)
-          try {
-            const savedReports = JSON.parse(localStorage.getItem('kpi_custom_reports') || '[]');
-            const idx = savedReports.findIndex(r => r.id === newReport.id);
-            if (idx >= 0) savedReports[idx] = newReport;
-            else savedReports.push(newReport);
-            localStorage.setItem('kpi_custom_reports', JSON.stringify(savedReports));
-          } catch (err) {}
+              // Gửi API cập nhật PUT lên backend
+              fetch(`/api/reports/${editingId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(state.reports[targetIdx])
+              }).catch(() => {});
 
-          // 3. Gửi đồng bộ lên backend Flask (nếu chạy local thì ghi luôn vào data.json)
-          fetch('/api/reports', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(newReport)
-          }).catch(() => {});
+              closeAddModal();
+              renderGroupTags();
+              renderContent();
+              showToast(`✏️ Đã cập nhật báo cáo ${editingId} thành công!`);
+            }
+          } else {
+            // TẠO MỚI BÁO CÁO (CREATE)
+            const newReport = {
+              id: reportId,
+              title: title,
+              group: groupId,
+              color: reportColor,
+              seed: seedVal,
+              updated_at: dateStr || '18/10/2026',
+              embed_url: embedUrl
+            };
 
-          // 4. Đóng modal & Render lại giao diện
-          closeAddModal();
-          renderGroupTags();
-          renderContent();
+            state.reports.push(newReport);
+            saveReportsToStorage();
 
-          showToast(`🎉 Đã thêm báo cáo ${newReport.id} thành công!`);
+            fetch('/api/reports', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(newReport)
+            }).catch(() => {});
 
-          // 5. Chuyển ngay đến chi tiết báo cáo mới
-          setTimeout(() => {
-            openReportDetail(newReport.id);
-          }, 350);
+            closeAddModal();
+            renderGroupTags();
+            renderContent();
+            showToast(`🎉 Đã thêm báo cáo ${newReport.id} thành công!`);
+
+            setTimeout(() => {
+              openReportDetail(newReport.id);
+            }, 350);
+          }
         });
       }
 

@@ -143,6 +143,66 @@ def api_create_report():
     return jsonify(new_report), 201
 
 
+@app.route('/api/reports/<report_id>', methods=['PUT'])
+def api_update_report(report_id):
+    """Cập nhật thông tin một báo cáo."""
+    req_data = request.get_json() or {}
+    data = load_data()
+    reports = data.get('reports', [])
+    report_idx = next((i for i, r in enumerate(reports) if r.get('id', '').upper() == report_id.upper()), None)
+    
+    if report_idx is None:
+        return jsonify({"error": "Report not found"}), 404
+        
+    current = reports[report_idx]
+    if 'title' in req_data:
+        current['title'] = req_data['title']
+    if 'group' in req_data:
+        current['group'] = req_data['group']
+        group_obj = next((g for g in data.get('groups', []) if g['id'] == current['group']), None)
+        if group_obj:
+            current['color'] = group_obj['color']
+    if 'color' in req_data:
+        current['color'] = req_data['color']
+    if 'updated_at' in req_data:
+        current['updated_at'] = req_data['updated_at']
+    if 'embed_url' in req_data:
+        current['embed_url'] = req_data['embed_url']
+    if 'seed' in req_data:
+        current['seed'] = float(req_data['seed'])
+        
+    reports[report_idx] = current
+    data['reports'] = reports
+    
+    try:
+        with open(DATA_FILE, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print("Lỗi ghi data.json:", e)
+        
+    return jsonify(current)
+
+
+@app.route('/api/reports/<report_id>', methods=['DELETE'])
+def api_delete_report(report_id):
+    """Xóa một báo cáo theo ID."""
+    data = load_data()
+    reports = data.get('reports', [])
+    new_reports = [r for r in reports if r.get('id', '').upper() != report_id.upper()]
+    
+    if len(new_reports) == len(reports):
+        return jsonify({"error": "Report not found"}), 404
+        
+    data['reports'] = new_reports
+    try:
+        with open(DATA_FILE, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print("Lỗi ghi data.json:", e)
+        
+    return jsonify({"success": True, "deleted_id": report_id})
+
+
 # ==========================================
 # 3. WEB PAGE ROUTES (SPA Shell)
 # ==========================================
