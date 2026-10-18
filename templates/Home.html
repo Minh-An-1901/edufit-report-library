@@ -782,6 +782,66 @@
       overflow-y: auto;
     }
 
+    .mock-bi-filters {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-bottom: 4px;
+    }
+
+    .mock-filter-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .mock-date-pill {
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: var(--radius-full);
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+    .mock-date-pill.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25);
+    }
+
+    .mock-select {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 5px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .mock-btn-action {
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: var(--transition-fast);
+    }
+    .mock-btn-action:hover { border-color: var(--primary); color: var(--primary); }
+
     .mock-bi-kpis {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -791,19 +851,41 @@
     .mock-kpi-card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
-      border-radius: var(--radius-md);
-      padding: 16px;
+      border-radius: var(--radius-lg);
+      padding: 16px 18px;
       box-shadow: var(--shadow-sm);
       position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .mock-kpi-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
     }
 
     .mock-kpi-label { font-size: 12px; color: var(--text-muted); font-weight: 600; }
-    .mock-kpi-val { font-size: 22px; font-weight: 800; color: var(--text-main); margin-top: 4px; }
-    .mock-kpi-trend { font-size: 12px; color: #16a34a; font-weight: 600; margin-top: 4px; display: flex; align-items: center; gap: 4px; }
+    .mock-kpi-val { font-size: 24px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; }
+    
+    .mock-kpi-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--card-border);
+    }
+
+    .mock-kpi-trend { font-size: 11.5px; color: #16a34a; font-weight: 700; display: flex; align-items: center; gap: 4px; }
+    .mock-kpi-sub { font-size: 11px; color: var(--text-light); }
 
     .mock-bi-chart-row {
       display: grid;
-      grid-template-columns: 2fr 1fr;
+      grid-template-columns: 2.1fr 1fr;
       gap: 16px;
       flex: 1;
     }
@@ -811,28 +893,102 @@
     .mock-chart-card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
-      border-radius: var(--radius-md);
-      padding: 18px;
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
       display: flex;
       flex-direction: column;
       position: relative;
+      box-shadow: var(--shadow-sm);
     }
 
     .mock-chart-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
-    .mock-chart-title { font-size: 13.5px; font-weight: 700; color: var(--text-main); }
-    .mock-time-pill {
+    .mock-chart-title { font-size: 13.5px; font-weight: 800; color: var(--text-main); }
+    .mock-chart-badge {
       font-size: 11px;
-      padding: 3px 8px;
+      font-weight: 600;
+      padding: 2px 8px;
       background: var(--body-bg);
-      border-radius: var(--radius-sm);
+      border-radius: var(--radius-full);
       color: var(--text-muted);
       border: 1px solid var(--card-border);
+    }
+
+    /* Ranking bars */
+    .mock-ranking-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .mock-ranking-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .mock-ranking-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .mock-ranking-name { color: var(--text-main); }
+    .mock-ranking-val { color: var(--primary); font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+
+    .mock-progress-track {
+      width: 100%;
+      height: 6px;
+      background: var(--body-bg);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      border: 1px solid var(--card-border);
+    }
+
+    .mock-progress-fill {
+      height: 100%;
+      border-radius: var(--radius-full);
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Donut Legend */
+    .mock-donut-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: auto;
+      margin-bottom: auto;
+    }
+
+    .mock-legend-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .mock-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .mock-legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
     }
 
     /* ============================================================
@@ -1424,7 +1580,7 @@
       content.innerHTML = html;
     }
 
-    // Chi tiết báo cáo có Sao chép Link & BI Dashboard trực quan (FR-08)
+    // Chi tiết báo cáo có Sao chép Link & BI Dashboard trực quan đẳng cấp (FR-08)
     function renderDetailView(reportId) {
       const content = document.getElementById('mainContent');
       const report = state.reports.find(r => r.id.toUpperCase() === reportId.toUpperCase());
@@ -1444,6 +1600,7 @@
       }
 
       const group = state.groups.find(g => g.id === report.group) || { color: '#4f46e5', name: report.group };
+      const gradId = `grad_${report.id}`;
 
       content.innerHTML = `
         <div class="detail-view">
@@ -1485,68 +1642,250 @@
                 <span>Khung nhúng BI Dashboard:</span>
                 <span class="embed-url-display">${report.embed_url}</span>
               </div>
-              <div>
-                <button onclick="showToast('Đang làm mới dữ liệu BI...')" style="color:var(--text-muted); font-size:12px; font-weight:600;">🔄 Làm mới dữ liệu</button>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <button class="mock-btn-action" onclick="showToast('Đang đồng bộ dữ liệu với máy chủ BI...')">🔄 Làm mới</button>
+                <button class="mock-btn-action" onclick="showToast('Đang tải tệp PDF báo cáo...')">📥 Tải PDF</button>
               </div>
             </div>
 
             <div class="embed-frame-wrapper">
               <div class="mock-bi-dashboard">
-                <div class="mock-bi-kpis">
-                  <div class="mock-kpi-card">
-                    <div class="mock-kpi-label">Tổng chỉ tiêu KPI</div>
-                    <div class="mock-kpi-val">96.4%</div>
-                    <div class="mock-kpi-trend">↑ +4.2% so với kỳ trước</div>
+                
+                <!-- BỘ LỌC KỲ BÁO CÁO & CƠ SỞ -->
+                <div class="mock-bi-filters">
+                  <div class="mock-filter-group">
+                    <span style="font-size:12px; font-weight:700; color:var(--text-muted); margin-right:4px;">Kỳ:</span>
+                    <button class="mock-date-pill active" onclick="handleDatePillClick(this, '7 ngày')">7 ngày qua</button>
+                    <button class="mock-date-pill" onclick="handleDatePillClick(this, '30 ngày')">30 ngày qua</button>
+                    <button class="mock-date-pill" onclick="handleDatePillClick(this, 'Quý 3')">Quý này</button>
+                    <button class="mock-date-pill" onclick="handleDatePillClick(this, 'Năm 2026')">Năm 2026</button>
                   </div>
-                  <div class="mock-kpi-card">
-                    <div class="mock-kpi-label">Dữ liệu ghi nhận</div>
-                    <div class="mock-kpi-val">2,450</div>
-                    <div class="mock-kpi-trend">↑ 100% đúng hạn</div>
-                  </div>
-                  <div class="mock-kpi-card">
-                    <div class="mock-kpi-label">Tỷ lệ chuyển đổi lead</div>
-                    <div class="mock-kpi-val">38.2%</div>
-                    <div class="mock-kpi-trend" style="color:#2563eb;">→ Vượt mục tiêu</div>
-                  </div>
-                  <div class="mock-kpi-card">
-                    <div class="mock-kpi-label">Cơ sở hoạt động</div>
-                    <div class="mock-kpi-val">14 / 14</div>
-                    <div class="mock-kpi-trend">Toàn hệ thống</div>
+                  <div class="mock-filter-group">
+                    <select class="mock-select" onchange="showToast('Đang lọc cơ sở: ' + this.options[this.selectedIndex].text)">
+                      <option value="all">Toàn hệ thống (${report.group})</option>
+                      <option value="cg">The Dewey Cầu Giấy</option>
+                      <option value="tht">The Dewey Tây Hồ Tây</option>
+                      <option value="tk">Sakura Montessori Thụy Khuê</option>
+                      <option value="hp">The Dewey Hải Phòng</option>
+                    </select>
+                    <button class="mock-btn-action" onclick="showToast('Đang xuất bảng dữ liệu Excel...')">📊 Xuất Excel</button>
                   </div>
                 </div>
 
-                <div class="mock-bi-chart-row">
-                  <div class="mock-chart-card">
-                    <div class="mock-chart-header">
-                      <span class="mock-chart-title">Biểu đồ tiến độ thực hiện theo tháng (${report.group})</span>
-                      <span class="mock-time-pill">90 ngày qua</span>
+                <!-- 4 THẺ CHỈ SỐ KPI VỚI SPARKLINE & THANH TIẾN ĐỘ -->
+                <div class="mock-bi-kpis">
+                  <div class="mock-kpi-card">
+                    <div class="mock-kpi-header">
+                      <span class="mock-kpi-label">Tổng chỉ tiêu KPI</span>
+                      <span style="font-size:11px; padding:2px 6px; border-radius:4px; background:rgba(34, 197, 94, 0.1); color:#16a34a; font-weight:700;">Đạt</span>
                     </div>
-                    <svg viewBox="0 0 600 180" width="100%" height="180" style="margin-top:auto;">
-                      <polyline fill="none" stroke="${group.color}" stroke-width="3" points="20,140 100,120 180,130 260,80 340,90 420,40 500,60 580,20"/>
-                      <polyline fill="none" stroke="#64748b" stroke-width="2" stroke-dasharray="4" points="20,160 100,150 180,140 260,110 340,120 420,90 500,80 580,50"/>
-                      <circle cx="580" cy="20" r="5" fill="${group.color}"/>
-                      <circle cx="580" cy="50" r="5" fill="#64748b"/>
-                    </svg>
+                    <div class="mock-kpi-val">96.4%</div>
+                    <div class="mock-progress-track" style="margin-top:8px;">
+                      <div class="mock-progress-fill" style="width: 96.4%; background: ${group.color};"></div>
+                    </div>
+                    <div class="mock-kpi-footer">
+                      <span class="mock-kpi-trend">↑ +4.2%</span>
+                      <span class="mock-kpi-sub">Kế hoạch: 92%</span>
+                    </div>
                   </div>
-                  <div class="mock-chart-card">
-                    <div class="mock-chart-header">
-                      <span class="mock-chart-title">Cơ cấu dữ liệu</span>
-                      <span class="mock-time-pill">Tỷ trọng</span>
+
+                  <div class="mock-kpi-card">
+                    <div class="mock-kpi-header">
+                      <span class="mock-kpi-label">Dữ liệu ghi nhận</span>
+                      <span style="font-size:11px; padding:2px 6px; border-radius:4px; background:rgba(79, 70, 229, 0.1); color:var(--primary); font-weight:700;">Thực tế</span>
                     </div>
-                    <div style="flex:1; display:flex; align-items:center; justify-content:center;">
-                      <svg viewBox="0 0 100 100" width="120" height="120">
-                        <circle cx="50" cy="50" r="35" fill="none" stroke="var(--card-border)" stroke-width="16"/>
-                        <circle cx="50" cy="50" r="35" fill="none" stroke="${group.color}" stroke-width="16" stroke-dasharray="140 220"/>
-                        <circle cx="50" cy="50" r="35" fill="none" stroke="#38bdf8" stroke-width="16" stroke-dasharray="60 220" stroke-dashoffset="-140"/>
-                      </svg>
+                    <div class="mock-kpi-val">2,450</div>
+                    <div class="mock-progress-track" style="margin-top:8px;">
+                      <div class="mock-progress-fill" style="width: 100%; background: #22c55e;"></div>
+                    </div>
+                    <div class="mock-kpi-footer">
+                      <span class="mock-kpi-trend">↑ 100% đúng hạn</span>
+                      <span class="mock-kpi-sub">14 cơ sở</span>
+                    </div>
+                  </div>
+
+                  <div class="mock-kpi-card">
+                    <div class="mock-kpi-header">
+                      <span class="mock-kpi-label">Tỷ lệ chuyển đổi lead</span>
+                      <span style="font-size:11px; padding:2px 6px; border-radius:4px; background:rgba(59, 130, 246, 0.1); color:#2563eb; font-weight:700;">+2.8%</span>
+                    </div>
+                    <div class="mock-kpi-val">38.2%</div>
+                    <div class="mock-progress-track" style="margin-top:8px;">
+                      <div class="mock-progress-fill" style="width: 76%; background: #3b82f6;"></div>
+                    </div>
+                    <div class="mock-kpi-footer">
+                      <span class="mock-kpi-trend" style="color:#2563eb;">→ Vượt mục tiêu</span>
+                      <span class="mock-kpi-sub">Benchmark: 35%</span>
+                    </div>
+                  </div>
+
+                  <div class="mock-kpi-card">
+                    <div class="mock-kpi-header">
+                      <span class="mock-kpi-label">Chỉ số hài lòng (CSAT)</span>
+                      <span style="font-size:11px; padding:2px 6px; border-radius:4px; background:rgba(234, 179, 8, 0.1); color:#ca8a04; font-weight:700;">★ 4.9</span>
+                    </div>
+                    <div class="mock-kpi-val">4.86 <span style="font-size:14px; color:var(--text-muted); font-weight:600;">/ 5.0</span></div>
+                    <div class="mock-progress-track" style="margin-top:8px;">
+                      <div class="mock-progress-fill" style="width: 97%; background: #eab308;"></div>
+                    </div>
+                    <div class="mock-kpi-footer">
+                      <span class="mock-kpi-trend" style="color:#ca8a04;">97.4% tích cực</span>
+                      <span class="mock-kpi-sub">1,120 phản hồi</span>
                     </div>
                   </div>
                 </div>
+
+                <!-- BIỂU ĐỒ DIỆN TÍCH (AREA GRADIENT CHART) & BẢNG XẾP HẠNG TOP CƠ SỞ -->
+                <div class="mock-bi-chart-row">
+                  
+                  <!-- Main Chart: Smooth Bezier Area Chart with Gradient Fill -->
+                  <div class="mock-chart-card">
+                    <div class="mock-chart-header">
+                      <div>
+                        <div class="mock-chart-title">Xu hướng thực hiện chỉ tiêu theo tháng (${report.group})</div>
+                        <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">So sánh thực tế và chỉ tiêu kế hoạch năm học 2026</div>
+                      </div>
+                      <div style="display:flex; align-items:center; gap:8px;">
+                        <span style="font-size:11px; color:${group.color}; font-weight:700; display:flex; align-items:center; gap:4px;">
+                          <span style="width:10px; height:3px; background:${group.color}; border-radius:2px;"></span> Thực tế
+                        </span>
+                        <span style="font-size:11px; color:#94a3b8; font-weight:600; display:flex; align-items:center; gap:4px;">
+                          <span style="width:10px; height:2px; background:#94a3b8; border-radius:2px; border-top:1px dashed #94a3b8;"></span> Kế hoạch
+                        </span>
+                      </div>
+                    </div>
+
+                    <div style="flex:1; min-height:190px; position:relative; display:flex; flex-direction:column; justify-content:flex-end;">
+                      <svg viewBox="0 0 600 200" width="100%" height="200" preserveAspectRatio="none" style="display:block; overflow:visible;">
+                        <defs>
+                          <linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="${group.color}" stop-opacity="0.38"/>
+                            <stop offset="100%" stop-color="${group.color}" stop-opacity="0.0"/>
+                          </linearGradient>
+                        </defs>
+
+                        <!-- Horizontal Grid Lines -->
+                        <line x1="30" y1="40" x2="580" y2="40" stroke="var(--card-border)" stroke-width="1" stroke-dasharray="4"/>
+                        <line x1="30" y1="90" x2="580" y2="90" stroke="var(--card-border)" stroke-width="1" stroke-dasharray="4"/>
+                        <line x1="30" y1="140" x2="580" y2="140" stroke="var(--card-border)" stroke-width="1" stroke-dasharray="4"/>
+                        <line x1="30" y1="180" x2="580" y2="180" stroke="var(--card-border)" stroke-width="1"/>
+
+                        <!-- Area Gradient Fill -->
+                        <path d="M 30,140 C 90,130 150,135 210,95 C 270,55 330,85 390,60 C 450,35 510,40 580,20 L 580,180 L 30,180 Z" 
+                              fill="url(#${gradId})" />
+
+                        <!-- Baseline Target (Dashed Gray Line) -->
+                        <path d="M 30,150 C 90,145 150,140 210,115 C 270,95 330,105 390,85 C 450,75 510,70 580,55" 
+                              fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5"/>
+
+                        <!-- Actual Smooth Curve -->
+                        <path d="M 30,140 C 90,130 150,135 210,95 C 270,55 330,85 390,60 C 450,35 510,40 580,20" 
+                              fill="none" stroke="${group.color}" stroke-width="3.5" stroke-linecap="round"/>
+
+                        <!-- Data Points -->
+                        <circle cx="30" cy="140" r="4.5" fill="var(--surface-bg)" stroke="${group.color}" stroke-width="2.5"/>
+                        <circle cx="210" cy="95" r="4.5" fill="var(--surface-bg)" stroke="${group.color}" stroke-width="2.5"/>
+                        <circle cx="390" cy="60" r="4.5" fill="var(--surface-bg)" stroke="${group.color}" stroke-width="2.5"/>
+                        <circle cx="580" cy="20" r="6" fill="${group.color}" stroke="var(--surface-bg)" stroke-width="3"/>
+                      </svg>
+
+                      <!-- X-Axis Labels -->
+                      <div style="display:flex; justify-content:space-between; padding:6px 20px 0; font-size:11px; color:var(--text-muted); font-weight:600; font-family:'JetBrains Mono', monospace;">
+                        <span>T5/26</span>
+                        <span>T6/26</span>
+                        <span>T7/26</span>
+                        <span>T8/26</span>
+                        <span>T9/26</span>
+                        <span style="color:${group.color}; font-weight:800;">T10/26 (Hiện tại)</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Ranking & Distribution Panel -->
+                  <div class="mock-chart-card">
+                    <div class="mock-chart-header">
+                      <div class="mock-chart-title">Xếp hạng cơ sở dẫn đầu</div>
+                      <span class="mock-chart-badge">KPI %</span>
+                    </div>
+
+                    <div class="mock-ranking-list">
+                      <div class="mock-ranking-item">
+                        <div class="mock-ranking-info">
+                          <span class="mock-ranking-name">1. The Dewey Cầu Giấy</span>
+                          <span class="mock-ranking-val">104.2%</span>
+                        </div>
+                        <div class="mock-progress-track">
+                          <div class="mock-progress-fill" style="width: 100%; background: ${group.color};"></div>
+                        </div>
+                      </div>
+
+                      <div class="mock-ranking-item">
+                        <div class="mock-ranking-info">
+                          <span class="mock-ranking-name">2. The Dewey Tây Hồ Tây</span>
+                          <span class="mock-ranking-val">98.5%</span>
+                        </div>
+                        <div class="mock-progress-track">
+                          <div class="mock-progress-fill" style="width: 95%; background: ${group.color}; opacity: 0.85;"></div>
+                        </div>
+                      </div>
+
+                      <div class="mock-ranking-item">
+                        <div class="mock-ranking-info">
+                          <span class="mock-ranking-name">3. Sakura Thụy Khuê</span>
+                          <span class="mock-ranking-val">95.0%</span>
+                        </div>
+                        <div class="mock-progress-track">
+                          <div class="mock-progress-fill" style="width: 91%; background: #38bdf8;"></div>
+                        </div>
+                      </div>
+
+                      <div class="mock-ranking-item">
+                        <div class="mock-ranking-info">
+                          <span class="mock-ranking-name">4. The Dewey Hải Phòng</span>
+                          <span class="mock-ranking-val">91.8%</span>
+                        </div>
+                        <div class="mock-progress-track">
+                          <div class="mock-progress-fill" style="width: 88%; background: #38bdf8; opacity: 0.8;"></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Donut mini -->
+                    <div class="mock-donut-container" style="margin-top:16px; padding-top:14px; border-top:1px dashed var(--card-border);">
+                      <div style="position:relative; width:64px; height:64px;">
+                        <svg viewBox="0 0 100 100" width="64" height="64">
+                          <circle cx="50" cy="50" r="38" fill="none" stroke="var(--card-border)" stroke-width="14"/>
+                          <circle cx="50" cy="50" r="38" fill="none" stroke="${group.color}" stroke-width="14" stroke-dasharray="140 240"/>
+                          <circle cx="50" cy="50" r="38" fill="none" stroke="#38bdf8" stroke-width="14" stroke-dasharray="60 240" stroke-dashoffset="-140"/>
+                        </svg>
+                      </div>
+                      <div class="mock-legend-list">
+                        <div class="mock-legend-item">
+                          <span class="mock-legend-dot" style="background:${group.color};"></span>
+                          <span>Trực tuyến: 58%</span>
+                        </div>
+                        <div class="mock-legend-item">
+                          <span class="mock-legend-dot" style="background:#38bdf8;"></span>
+                          <span>Đối tác & Khác: 42%</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
               </div>
             </div>
           </div>
         </div>
       `;
+    }
+
+    function handleDatePillClick(btn, label) {
+      const container = btn.parentElement;
+      container.querySelectorAll('.mock-date-pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      showToast(`Đang làm mới dữ liệu kỳ: ${label}...`);
     }
 
     // -------------------------------------------------------------
