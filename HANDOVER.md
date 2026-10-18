@@ -47,9 +47,9 @@ Hệ thống được thiết kế theo mô hình **Hybrid SPA (Single Page Appl
 
 ## 3. Các Hạn Chế Đã Biết (Known Limitations)
 
-* Dữ liệu hiện tại được lưu dưới dạng file JSON tĩnh, chưa kết nối trực tiếp vào hệ quản trị cơ sở dữ liệu (RDBMS). Mọi thao tác thêm/sửa chỉ thực hiện qua file.
-* Chưa có cơ chế phân quyền người dùng (Role-Based Access Control) thực tế theo tài khoản Google/Azure AD của nhà trường.
-* Khung nhúng BI Dashboard hiện tại đang hiển thị giao diện mô phỏng nội bộ, chưa nhúng PowerBI Tokenized Iframe trực tiếp từ máy chủ BI thật của Edufit.
+* Đã hỗ trợ chức năng **+ Thêm báo cáo mới** trực tiếp trên giao diện UI (lưu dữ liệu bền vững qua `localStorage` trên Vercel và đồng bộ vào `data.json` qua `POST /api/reports` khi chạy local). Tuy nhiên ở giai đoạn dài hạn, cần kết nối vào hệ quản trị cơ sở dữ liệu quan hệ (PostgreSQL / MySQL) tập trung cho toàn tổ chức.
+* Chưa có cơ chế phân quyền người dùng (Role-Based Access Control) thực tế theo tài khoản Google/Azure AD của nhà trường (hiện dùng Mock RBAC giả lập).
+* Khung nhúng BI Dashboard hiện tại đang hiển thị giao diện mô phỏng nội bộ cao cấp, chưa nhúng PowerBI Tokenized Iframe trực tiếp từ máy chủ BI thật của Edufit.
 
 ---
 
