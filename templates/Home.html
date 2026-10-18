@@ -1,0 +1,1621 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thư viện báo cáo - KPIMATRIX</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ============================================================
+       1. RESET & CSS VARIABLES (GIAO DIỆN CHUẨN THAM CHIẾU)
+       ============================================================ */
+    :root {
+      --sidebar-bg: #0b1329;
+      --sidebar-hover: rgba(255, 255, 255, 0.06);
+      --sidebar-active-bg: rgba(79, 70, 229, 0.28);
+      --sidebar-active-border: rgba(129, 140, 248, 0.4);
+      --sidebar-text: #94a3b8;
+      --sidebar-text-active: #ffffff;
+      
+      --toolbar-bg: #ffffff;
+      --toolbar-border: #e2e8f0;
+      --body-bg: #f8fafc;
+      --card-bg: #ffffff;
+      --card-border: #e2e8f0;
+      
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      
+      --primary: #4f46e5;
+      --primary-light: #eef2ff;
+      
+      --radius-sm: 8px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --radius-full: 9999px;
+      
+      --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background-color: var(--body-bg);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+      font-size: 14px;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    button {
+      font-family: inherit;
+      border: none;
+      background: none;
+      cursor: pointer;
+      outline: none;
+    }
+
+    /* Focus accessibility (UI-03) */
+    button:focus-visible, input:focus-visible, [tabindex="0"]:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+
+    /* ============================================================
+       2. SIDEBAR CỐ ĐỊNH BÊN TRÁI (FR-01)
+       ============================================================ */
+    .sidebar {
+      width: 240px;
+      background-color: var(--sidebar-bg);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      z-index: 100;
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+      transition: var(--transition);
+    }
+
+    .brand-logo {
+      padding: 24px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .logo-cube {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #6366f1, #3b82f6);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+    }
+
+    .logo-cube svg {
+      width: 22px;
+      height: 22px;
+      fill: #ffffff;
+    }
+
+    .logo-text {
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+    .logo-text .kpi { color: #ffffff; }
+    .logo-text .matrix { color: #60a5fa; }
+
+    .nav-list {
+      list-style: none;
+      padding: 20px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+
+    .nav-item button {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      color: var(--sidebar-text);
+      font-weight: 500;
+      font-size: 14px;
+      transition: var(--transition);
+      text-align: left;
+    }
+
+    .nav-item button:hover {
+      background-color: var(--sidebar-hover);
+      color: #ffffff;
+    }
+
+    .nav-item.active button {
+      background-color: var(--sidebar-active-bg);
+      border: 1px solid var(--sidebar-active-border);
+      color: var(--sidebar-text-active);
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .nav-item button svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      opacity: 0.85;
+    }
+
+    .nav-item.active button svg {
+      opacity: 1;
+      stroke: #818cf8;
+    }
+
+    .sidebar-footer {
+      padding: 16px 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 12px;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Mobile toggle */
+    .mobile-menu-btn {
+      display: none;
+      padding: 8px;
+      border-radius: var(--radius-sm);
+      color: var(--text-main);
+    }
+
+    /* ============================================================
+       3. KHU VỰC NỘI DUNG CHÍNH & TOOLBAR (FR-02)
+       ============================================================ */
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      background-color: var(--body-bg);
+    }
+
+    .toolbar {
+      background-color: var(--toolbar-bg);
+      border-bottom: 1px solid var(--toolbar-border);
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      flex-wrap: wrap;
+    }
+
+    .page-title {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: #0f172a;
+      text-transform: uppercase;
+      margin-right: 8px;
+      white-space: nowrap;
+    }
+
+    /* Tag Pills (FR-03) */
+    .tags-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .tag-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      font-size: 13px;
+      font-weight: 700;
+      border: 1.5px solid transparent;
+      transition: var(--transition);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .tag-pill svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* Tag styles per group */
+    .tag-pill[data-group="TDS"] {
+      color: #4f46e5;
+      background-color: rgba(79, 70, 229, 0.08);
+      border-color: rgba(79, 70, 229, 0.25);
+    }
+    .tag-pill[data-group="TDS"].active {
+      background-color: #4f46e5;
+      color: #ffffff;
+      border-color: #4f46e5;
+      box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+    }
+
+    .tag-pill[data-group="SKR"] {
+      color: #e0527a;
+      background-color: rgba(224, 82, 122, 0.08);
+      border-color: rgba(224, 82, 122, 0.25);
+    }
+    .tag-pill[data-group="SKR"].active {
+      background-color: #e0527a;
+      color: #ffffff;
+      border-color: #e0527a;
+      box-shadow: 0 4px 10px rgba(224, 82, 122, 0.3);
+    }
+
+    .tag-pill[data-group="ASC"] {
+      color: #f0842c;
+      background-color: rgba(240, 132, 44, 0.08);
+      border-color: rgba(240, 132, 44, 0.25);
+    }
+    .tag-pill[data-group="ASC"].active {
+      background-color: #f0842c;
+      color: #ffffff;
+      border-color: #f0842c;
+      box-shadow: 0 4px 10px rgba(240, 132, 44, 0.3);
+    }
+
+    .tag-pill[data-group="TN"] {
+      color: #22a06b;
+      background-color: rgba(34, 160, 107, 0.08);
+      border-color: rgba(34, 160, 107, 0.25);
+    }
+    .tag-pill[data-group="TN"].active {
+      background-color: #22a06b;
+      color: #ffffff;
+      border-color: #22a06b;
+      box-shadow: 0 4px 10px rgba(34, 160, 107, 0.3);
+    }
+
+    .tag-pill:hover {
+      transform: translateY(-1px);
+    }
+
+    /* Toolbar Right Controls */
+    .toolbar-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .search-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-box svg {
+      position: absolute;
+      left: 12px;
+      width: 16px;
+      height: 16px;
+      color: #94a3b8;
+      pointer-events: none;
+    }
+
+    .search-input {
+      padding: 8px 34px 8px 36px;
+      border-radius: var(--radius-full);
+      border: 1px solid #cbd5e1;
+      background-color: #f8fafc;
+      font-size: 13px;
+      width: 220px;
+      font-family: inherit;
+      color: var(--text-main);
+      transition: var(--transition);
+    }
+
+    .search-input:focus {
+      background-color: #ffffff;
+      border-color: var(--primary);
+      width: 260px;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+    }
+
+    .clear-search-btn {
+      position: absolute;
+      right: 10px;
+      color: #94a3b8;
+      display: none;
+      font-size: 16px;
+      line-height: 1;
+      padding: 2px;
+    }
+
+    .clear-search-btn:hover {
+      color: #475569;
+    }
+
+    /* View Switcher (FR-07) */
+    .view-switcher {
+      display: flex;
+      align-items: center;
+      background-color: #f1f5f9;
+      border-radius: var(--radius-md);
+      padding: 3px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .view-btn {
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+
+    .view-btn.active {
+      background-color: #ffffff;
+      color: #0f172a;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .view-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Demo Simulator Toggle Dropdown (FR-09) */
+    .simulator-wrapper {
+      position: relative;
+    }
+
+    .sim-toggle-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 10px;
+      border-radius: var(--radius-md);
+      background-color: #f1f5f9;
+      color: #475569;
+      border: 1px solid #cbd5e1;
+    }
+
+    .sim-toggle-btn:hover {
+      background-color: #e2e8f0;
+    }
+
+    .sim-menu {
+      position: absolute;
+      right: 0;
+      top: 110%;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+      width: 220px;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 200;
+    }
+
+    .sim-menu.show {
+      display: flex;
+    }
+
+    .sim-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #334155;
+    }
+
+    .sim-item input[type="checkbox"] {
+      cursor: pointer;
+    }
+
+    /* ============================================================
+       4. VÙNG HIỂN THỊ NỘI DUNG CHÍNH (FR-04, FR-05)
+       ============================================================ */
+    .content-area {
+      padding: 28px;
+      flex: 1;
+    }
+
+    .group-section {
+      margin-bottom: 36px;
+    }
+
+    .group-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .group-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .group-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: 0.3px;
+    }
+
+    .group-badge {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      background-color: #eff6ff;
+      color: #3b82f6;
+    }
+
+    /* CARDS GRID (3 cột trên desktop) */
+    .reports-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 22px;
+    }
+
+    .report-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: var(--transition);
+      cursor: pointer;
+      position: relative;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+    }
+
+    .report-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.09);
+      border-color: #cbd5e1;
+    }
+
+    /* PROCEDURAL COLOR BLOCK THUMBNAIL (Khối màu từ seed & color) */
+    .card-thumbnail {
+      width: 100%;
+      height: 135px;
+      background-color: #f8fafc;
+      border-bottom: 1px solid #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-body {
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+
+    .card-tag {
+      align-self: flex-start;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.35;
+      margin-top: 2px;
+    }
+
+    .card-subtitle {
+      font-size: 13px;
+      color: var(--text-light);
+      margin-top: auto;
+      padding-top: 10px;
+    }
+
+    /* LIST VIEW (FR-07) */
+    .reports-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .report-list-item {
+      background-color: #ffffff;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      transition: var(--transition);
+      cursor: pointer;
+    }
+
+    .report-list-item:hover {
+      transform: translateX(4px);
+      border-color: #cbd5e1;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .list-thumbnail {
+      width: 52px;
+      height: 52px;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      flex-shrink: 0;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+    }
+
+    .list-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .list-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .list-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .list-action-btn {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* ============================================================
+       5. TRANG CHI TIẾT BÁO CÁO (FR-08) & EMBED IFRAME
+       ============================================================ */
+    .detail-view {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background-color: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      color: #334155;
+      font-size: 13px;
+      align-self: flex-start;
+      transition: var(--transition);
+    }
+
+    .back-btn:hover {
+      background-color: #f1f5f9;
+      color: #0f172a;
+    }
+
+    .detail-header-card {
+      background: #ffffff;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .detail-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+
+    .detail-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 13px;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+
+    .detail-embed-container {
+      background: #ffffff;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    }
+
+    .embed-toolbar {
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #64748b;
+    }
+
+    .embed-url-display {
+      font-family: monospace;
+      background: #ffffff;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid #e2e8f0;
+      color: #3b82f6;
+    }
+
+    .embed-frame-wrapper {
+      height: 520px;
+      position: relative;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* MÔ PHỎNG BI DASHBOARD THẬT */
+    .mock-bi-dashboard {
+      padding: 24px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      background: #f8fafc;
+      overflow-y: auto;
+    }
+
+    .mock-bi-kpis {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .mock-kpi-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+
+    .mock-kpi-label { font-size: 12px; color: #64748b; font-weight: 500; }
+    .mock-kpi-val { font-size: 22px; font-weight: 800; color: #0f172a; margin-top: 4px; }
+    .mock-kpi-trend { font-size: 12px; color: #16a34a; font-weight: 600; margin-top: 4px; }
+
+    .mock-bi-chart-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 16px;
+      flex: 1;
+    }
+
+    .mock-chart-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mock-chart-title { font-size: 14px; font-weight: 700; color: #0f172a; margin-bottom: 12px; }
+
+    /* ============================================================
+       6. CÁC TRẠNG THÁI: LOADING, EMPTY, ERROR, 404, PLACEHOLDER
+       ============================================================ */
+    /* State Box chung */
+    .state-box {
+      background: #ffffff;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 60px 24px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    .state-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #64748b;
+    }
+
+    .state-icon svg { width: 28px; height: 28px; }
+    .state-title { font-size: 18px; font-weight: 800; color: #0f172a; }
+    .state-desc { font-size: 14px; color: var(--text-muted); max-width: 440px; }
+
+    .state-btn {
+      padding: 9px 20px;
+      background: var(--primary);
+      color: #ffffff;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      font-size: 13px;
+      margin-top: 6px;
+      transition: var(--transition);
+    }
+    .state-btn:hover { background: #4338ca; }
+
+    /* Skeleton Loading (FR-09) */
+    .skeleton {
+      animation: skeleton-pulse 1.5s infinite;
+      background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+      background-size: 200% 100%;
+      border-radius: var(--radius-sm);
+    }
+
+    @keyframes skeleton-pulse {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ============================================================
+       7. RESPONSIVE DESIGN (UI-02: 768px, 360px)
+       ============================================================ */
+    @media (max-width: 1024px) {
+      .mock-bi-kpis { grid-template-columns: repeat(2, 1fr); }
+      .mock-bi-chart-row { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      body { flex-direction: column; }
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+      }
+      .brand-logo { justify-content: space-between; }
+      .nav-list { display: none; }
+      .nav-list.open { display: flex; }
+      .mobile-menu-btn { display: block; }
+      .toolbar { padding: 12px 16px; gap: 10px; }
+      .toolbar-right { margin-left: 0; width: 100%; justify-content: space-between; }
+      .search-input { width: 100% !important; }
+      .search-box { flex: 1; }
+      .content-area { padding: 18px 16px; }
+      .reports-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 480px) {
+      .tags-container { width: 100%; overflow-x: auto; padding-bottom: 4px; }
+      .page-title { width: 100%; }
+      .mock-bi-kpis { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       A. SIDEBAR CỐ ĐỊNH BÊN TRÁI (FR-01)
+       ============================================================ -->
+  <aside class="sidebar">
+    <div class="brand-logo">
+      <div class="logo-cube">
+        <svg viewBox="0 0 24 24"><path d="M21 16.5C21 16.88 20.79 17.21 20.47 17.38L12.57 21.82C12.41 21.91 12.21 21.96 12 21.96C11.79 21.96 11.59 21.91 11.43 21.82L3.53 17.38C3.21 17.21 3 16.88 3 16.5V7.5C3 7.12 3.21 6.79 3.53 6.62L11.43 2.18C11.59 2.09 11.79 2.04 12 2.04C12.21 2.04 12.41 2.09 12.57 2.18L20.47 6.62C20.79 6.79 21 7.12 21 7.5V16.5Z"/></svg>
+      </div>
+      <div class="logo-text">
+        <span class="kpi">KPI</span><span class="matrix">MATRIX</span>
+      </div>
+      <button class="mobile-menu-btn" id="mobileMenuToggle" aria-label="Mở menu">
+        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+
+    <ul class="nav-list" id="sidebarNav">
+      <!-- Sinh động từ data.menus qua JavaScript -->
+    </ul>
+
+    <div class="sidebar-footer">
+      <span>Hệ thống Edufit © 2026</span>
+      <span>v1.0</span>
+    </div>
+  </aside>
+
+  <!-- ============================================================
+       B. MAIN WRAPPER (TOOLBAR + CONTENT)
+       ============================================================ -->
+  <div class="main-wrapper">
+    
+    <!-- TOOLBAR (FR-02) -->
+    <header class="toolbar">
+      <div class="page-title">THƯ VIỆN BÁO CÁO</div>
+
+      <!-- Tag Pills (FR-03) -->
+      <div class="tags-container" id="groupTagsContainer">
+        <!-- Sinh động qua JS -->
+      </div>
+
+      <!-- Controls bên phải -->
+      <div class="toolbar-right">
+        <!-- Ô tìm kiếm (FR-06) -->
+        <div class="search-box">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" id="searchInput" class="search-input" placeholder="Tìm tên báo cáo..." autocomplete="off">
+          <button class="clear-search-btn" id="clearSearchBtn" aria-label="Xóa từ khóa">&times;</button>
+        </div>
+
+        <!-- Chế độ Lưới / Danh sách (FR-07) -->
+        <div class="view-switcher" role="group" aria-label="Chế độ xem">
+          <button class="view-btn active" id="btnViewGrid" title="Dạng lưới" aria-label="Dạng lưới">
+            <svg fill="currentColor" viewBox="0 0 16 16"><path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zM2.5 2a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zM1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3z"/></svg>
+          </button>
+          <button class="view-btn" id="btnViewList" title="Dạng danh sách" aria-label="Dạng danh sách">
+            <svg fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/></svg>
+          </button>
+        </div>
+
+        <!-- Trình giả lập trạng thái cho người chấm (FR-09) -->
+        <div class="simulator-wrapper">
+          <button class="sim-toggle-btn" id="simToggleBtn" title="Mô phỏng trạng thái đề bài FR-09">
+            <span>🧪 Demo State</span>
+            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="sim-menu" id="simMenu">
+            <label class="sim-item">
+              <span>Độ trễ 1s (Loading)</span>
+              <input type="checkbox" id="simDelayCheck">
+            </label>
+            <label class="sim-item">
+              <span>Lỗi mạng (Error API)</span>
+              <input type="checkbox" id="simErrorCheck">
+            </label>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENT AREA -->
+    <main class="content-area" id="mainContent">
+      <!-- Được render động bởi JS -->
+    </main>
+
+  </div>
+
+  <!-- ============================================================
+       C. LOGIC JAVASCRIPT GỌN NHẸ (SPA & TƯƠNG TÁC ĐẦY ĐỦ)
+       ============================================================ -->
+  <script>
+    // Dữ liệu ban đầu truyền từ Flask hoặc fetch qua API
+    const APP_DATA = {{ initial_data | tojson | safe }};
+
+    // -------------------------------------------------------------
+    // 1. STATE MANAGEMENT TẬP TRUNG (EX-05)
+    // -------------------------------------------------------------
+    const state = {
+      groups: APP_DATA.groups || [],
+      menus: APP_DATA.menus || [],
+      reports: APP_DATA.reports || [],
+      
+      currentPath: window.location.pathname || '/thu-vien-bao-cao',
+      selectedGroup: null, // 'TDS', 'SKR', 'ASC', 'TN' hoặc null (FR-03)
+      searchQuery: '',     // Từ khóa tìm kiếm (FR-06)
+      viewMode: localStorage.getItem('kpi_view_mode') || 'grid', // 'grid' hoặc 'list' (FR-07)
+      
+      // Giả lập trạng thái FR-09
+      simulateDelay: false,
+      simulateError: false,
+      isLoading: false,
+      hasError: false
+    };
+
+    // -------------------------------------------------------------
+    // 2. UTILS: CHUẨN HÓA TIẾNG VIỆT & SINH KHỐI MÀU PROCEDURAL
+    // -------------------------------------------------------------
+    
+    // Chuẩn hóa tiếng Việt: bỏ dấu, xử lý đ/Đ (FR-06)
+    function normalizeVietnamese(text) {
+      if (!text) return '';
+      return text
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[đĐ]/g, m => m === 'đ' ? 'd' : 'D')
+        .toLowerCase()
+        .trim();
+    }
+
+    // Sinh ảnh khối màu SVG dựa vào Seed và Color (FR-05) - Chuẩn ảnh tham chiếu image1.png
+    function generateThumbnailSvg(color, seed) {
+      const s = Number(seed) || 1;
+      // Sinh bố cục khối hình học dựa vào seed
+      const pattern = s % 4;
+      let rects = '';
+      
+      if (pattern === 3 || pattern === 0) {
+        // Kiểu 1: Khối góc trên trái và khối đối diện (như thẻ R01)
+        rects = `
+          <rect x="0" y="0" width="80" height="90" fill="${color}" rx="0"/>
+          <rect x="160" y="70" width="80" height="70" fill="${color}" rx="0"/>
+          <rect x="240" y="0" width="100" height="90" fill="${color}" rx="0"/>
+        `;
+      } else if (pattern === 1) {
+        // Kiểu 2: Khối vàng/cam góc trên và thanh ngang dưới (như thẻ R02)
+        rects = `
+          <rect x="130" y="0" width="80" height="25" fill="${color}" rx="0"/>
+          <rect x="290" y="25" width="80" height="90" fill="${color}" rx="0"/>
+          <rect x="130" y="105" width="80" height="30" fill="${color}" rx="0"/>
+        `;
+      } else if (pattern === 2) {
+        // Kiểu 3: Khối vuông lớn trung tâm hoặc 2 mảng lớn (như thẻ R03)
+        rects = `
+          <rect x="0" y="0" width="360" height="135" fill="${color}"/>
+          <rect x="80" y="22" width="180" height="90" fill="#ffffff" rx="2"/>
+        `;
+      }
+
+      return `
+        <svg viewBox="0 0 360 135" width="100%" height="100%" preserveAspectRatio="none" style="display:block;">
+          <rect width="360" height="135" fill="#ffffff"/>
+          ${rects}
+        </svg>
+      `;
+    }
+
+    // Icon Menu SVG Map
+    function getMenuIconSvg(iconName) {
+      switch (iconName) {
+        case 'pie-chart':
+          return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83M22 12A10 10 0 0 0 12 2v10z"/></svg>`;
+        case 'table':
+          return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h18v18H3zM3 9h18M3 15h18M9 3v18M15 3v18"/></svg>`;
+        case 'scan':
+          return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7V5a2 2 0 0 1 2-2h2m10 0h2a2 2 0 0 1 2 2v2m0 10v2a2 2 0 0 1-2 2h-2m-10 0H5a2 2 0 0 1-2-2v-2M8 12h8M12 8v8"/></svg>`;
+        case 'id-badge':
+          return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10M7 12h6M7 16h4"/></svg>`;
+        case 'graduation-cap':
+          return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5zM6 12v5c3 3 9 3 12 0v-5"/></svg>`;
+        default:
+          return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>`;
+      }
+    }
+
+    // -------------------------------------------------------------
+    // 3. LOGIC LỌC VÀ TÌM KIẾM BÁO CÁO (EX-03, FR-03, FR-06)
+    // -------------------------------------------------------------
+    function getFilteredReports() {
+      let list = state.reports;
+
+      // Lọc theo nhóm
+      if (state.selectedGroup) {
+        list = list.filter(r => r.group.toUpperCase() === state.selectedGroup.toUpperCase());
+      }
+
+      // Tìm theo tên không dấu
+      if (state.searchQuery) {
+        const q = normalizeVietnamese(state.searchQuery);
+        list = list.filter(r => normalizeVietnamese(r.title).includes(q));
+      }
+
+      return list;
+    }
+
+    // -------------------------------------------------------------
+    // 4. RENDER CÁC THÀNH PHẦN GIAO DIỆN
+    // -------------------------------------------------------------
+    
+    // Render Sidebar Menu (FR-01)
+    function renderSidebar() {
+      const navList = document.getElementById('sidebarNav');
+      if (!navList) return;
+
+      navList.innerHTML = state.menus.map(item => {
+        const isActive = state.currentPath.startsWith(item.path);
+        return `
+          <li class="nav-item ${isActive ? 'active' : ''}">
+            <button onclick="navigate('${item.path}')">
+              ${getMenuIconSvg(item.icon)}
+              <span>${item.title}</span>
+            </button>
+          </li>
+        `;
+      }).join('');
+    }
+
+    // Render Group Tag Pills (FR-02, FR-03)
+    function renderGroupTags() {
+      const container = document.getElementById('groupTagsContainer');
+      if (!container) return;
+
+      container.innerHTML = state.groups.map(g => {
+        const isSelected = state.selectedGroup === g.id;
+        return `
+          <button class="tag-pill ${isSelected ? 'active' : ''}" 
+                  data-group="${g.id}" 
+                  onclick="toggleGroupFilter('${g.id}')">
+            <svg fill="currentColor" viewBox="0 0 16 16"><path d="M2 2a1 1 0 0 1 1-1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 2 6.586V2zm3.5 4a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/></svg>
+            <span>${g.name}</span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    // Render Main Content (Lưới / Danh sách / Chi tiết / Lỗi / Placeholder)
+    function renderContent() {
+      const content = document.getElementById('mainContent');
+      if (!content) return;
+
+      // 1. Trạng thái Loading (FR-09)
+      if (state.isLoading) {
+        content.innerHTML = `
+          <div class="reports-grid">
+            ${Array(6).fill(0).map(() => `
+              <div class="report-card" style="pointer-events:none;">
+                <div class="card-thumbnail skeleton"></div>
+                <div class="card-body">
+                  <div class="skeleton" style="width: 50px; height: 16px; margin-bottom: 8px;"></div>
+                  <div class="skeleton" style="width: 80%; height: 20px; margin-bottom: 12px;"></div>
+                  <div class="skeleton" style="width: 40%; height: 14px;"></div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+        return;
+      }
+
+      // 2. Trạng thái Lỗi (FR-09)
+      if (state.hasError) {
+        content.innerHTML = `
+          <div class="state-box">
+            <div class="state-icon" style="color:#ef4444; background:#fef2f2;">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
+            </div>
+            <div class="state-title">Không thể tải dữ liệu báo cáo</div>
+            <div class="state-desc">Đã xảy ra lỗi khi kết nối tới máy chủ. Vui lòng bấm Thử lại để tải lại dữ liệu.</div>
+            <button class="state-btn" onclick="retryFetchData()">Thử lại</button>
+          </div>
+        `;
+        return;
+      }
+
+      // 3. Kiểm tra nếu là trang Chi tiết báo cáo (/thu-vien-bao-cao/R01) (FR-08)
+      const detailMatch = state.currentPath.match(/^\/thu-vien-bao-cao\/([^\/]+)$/);
+      if (detailMatch) {
+        const reportId = detailMatch[1];
+        renderDetailView(reportId);
+        return;
+      }
+
+      // 4. Nếu là các mục menu khác (FR-10)
+      if (state.currentPath !== '/thu-vien-bao-cao' && state.currentPath !== '/') {
+        const activeMenu = state.menus.find(m => m.path === state.currentPath);
+        const title = activeMenu ? activeMenu.title : 'Trang nội bộ';
+        content.innerHTML = `
+          <div class="state-box">
+            <div class="state-icon" style="color:var(--primary); background:var(--primary-light);">
+              ${getMenuIconSvg(activeMenu ? activeMenu.icon : 'scan')}
+            </div>
+            <div class="state-title">${title}</div>
+            <div class="state-desc">Tính năng đang trong quá trình phát triển theo kế hoạch triển khai của Edufit.</div>
+            <button class="state-btn" onclick="navigate('/thu-vien-bao-cao')">Quay lại Thư viện báo cáo</button>
+          </div>
+        `;
+        return;
+      }
+
+      // 5. Hiển thị Thư viện báo cáo (Lưới hoặc Danh sách) (FR-04, FR-07)
+      const filtered = getFilteredReports();
+
+      // Nếu không có kết quả nào (FR-09)
+      if (filtered.length === 0) {
+        content.innerHTML = `
+          <div class="state-box">
+            <div class="state-icon">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            </div>
+            <div class="state-title">Không tìm thấy báo cáo phù hợp</div>
+            <div class="state-desc">Không có báo cáo nào khớp với từ khóa "<strong>${escapeHtml(state.searchQuery)}</strong>" hoặc bộ lọc hiện tại.</div>
+            <button class="state-btn" onclick="clearAllFilters()">Xóa bộ lọc</button>
+          </div>
+        `;
+        return;
+      }
+
+      // Gom nhóm báo cáo (FR-04)
+      let html = '';
+      state.groups.forEach(group => {
+        const groupReports = filtered.filter(r => r.group.toUpperCase() === group.id.toUpperCase());
+        // Nhóm không còn báo cáo nào thì ẩn luôn tiêu đề (FR-04)
+        if (groupReports.length === 0) return;
+
+        html += `
+          <section class="group-section">
+            <div class="group-header">
+              <span class="group-dot" style="background-color: ${group.color}"></span>
+              <h2 class="group-title">${group.name}</h2>
+              <span class="group-badge">${groupReports.length} báo cáo</span>
+            </div>
+        `;
+
+        if (state.viewMode === 'grid') {
+          // HIỂN THỊ DẠNG LƯỚI CARDS (FR-05)
+          html += `<div class="reports-grid">`;
+          groupReports.forEach(r => {
+            html += `
+              <div class="report-card" tabindex="0" role="button" onclick="openReportDetail('${r.id}')" onkeydown="handleCardKeydown(event, '${r.id}')">
+                <div class="card-thumbnail">
+                  ${generateThumbnailSvg(r.color, r.seed)}
+                </div>
+                <div class="card-body">
+                  <span class="card-tag" style="background-color: ${r.color}15; color: ${r.color}">
+                    ${r.group}
+                  </span>
+                  <h3 class="card-title">${r.title.toUpperCase()}</h3>
+                  <div class="card-subtitle">Ấn để xem chi tiết báo cáo</div>
+                </div>
+              </div>
+            `;
+          });
+          html += `</div>`;
+        } else {
+          // HIỂN THỊ DẠNG DANH SÁCH (FR-07)
+          html += `<div class="reports-list">`;
+          groupReports.forEach(r => {
+            html += `
+              <div class="report-list-item" tabindex="0" role="button" onclick="openReportDetail('${r.id}')" onkeydown="handleCardKeydown(event, '${r.id}')">
+                <div class="list-thumbnail">
+                  ${generateThumbnailSvg(r.color, r.seed)}
+                </div>
+                <div class="list-info">
+                  <h3 class="list-title">${r.title.toUpperCase()}</h3>
+                  <div class="list-meta">
+                    <span class="card-tag" style="background-color: ${r.color}15; color: ${r.color};">${r.group}</span>
+                    <span>Cập nhật: ${r.updated_at}</span>
+                    <span>Mã: ${r.id}</span>
+                  </div>
+                </div>
+                <div class="list-action-btn">
+                  <span>Xem báo cáo</span>
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </div>
+              </div>
+            `;
+          });
+          html += `</div>`;
+        }
+
+        html += `</section>`;
+      });
+
+      content.innerHTML = html;
+    }
+
+    // Render Chi tiết báo cáo (FR-08)
+    function renderDetailView(reportId) {
+      const content = document.getElementById('mainContent');
+      const report = state.reports.find(r => r.id.toUpperCase() === reportId.toUpperCase());
+
+      // Mã không tồn tại -> Trang 404 thân thiện (FR-08)
+      if (!report) {
+        content.innerHTML = `
+          <div class="state-box">
+            <div class="state-icon" style="color:#ef4444; background:#fef2f2;">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+            </div>
+            <div class="state-title">Không tìm thấy báo cáo (Mã: ${escapeHtml(reportId)})</div>
+            <div class="state-desc">Báo cáo bạn đang tìm kiếm không tồn tại hoặc đã bị xóa khỏi hệ thống.</div>
+            <button class="state-btn" onclick="backToLibrary()">Quay về Thư viện báo cáo</button>
+          </div>
+        `;
+        return;
+      }
+
+      const group = state.groups.find(g => g.id === report.group) || { color: '#4f46e5', name: report.group };
+
+      content.innerHTML = `
+        <div class="detail-view">
+          <button class="back-btn" onclick="backToLibrary()">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            <span>Quay lại Thư viện</span>
+          </button>
+
+          <div class="detail-header-card">
+            <div>
+              <h1 class="detail-title">${report.title.toUpperCase()}</h1>
+              <div class="detail-meta-row">
+                <span class="card-tag" style="background-color: ${group.color}15; color: ${group.color}; font-weight:700;">
+                  ${report.group}
+                </span>
+                <span><strong>Mã báo cáo:</strong> ${report.id}</span>
+                <span><strong>Ngày cập nhật:</strong> ${report.updated_at}</span>
+              </div>
+            </div>
+            <div>
+              <span style="font-size:12px; color:#16a34a; background:#f0fdf4; border:1px solid #bbf7d0; padding:6px 12px; border-radius:var(--radius-full); font-weight:600;">
+                ● Trực tuyến
+              </span>
+            </div>
+          </div>
+
+          <!-- Khung nhúng giả lập BI Dashboard (FR-08) -->
+          <div class="detail-embed-container">
+            <div class="embed-toolbar">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#22c55e;"></span>
+                <span>Khung nhúng BI Dashboard:</span>
+                <span class="embed-url-display">${report.embed_url}</span>
+              </div>
+              <div>
+                <button onclick="alert('Đang làm mới dữ liệu BI...')" style="color:#64748b; font-size:12px;">🔄 Làm mới</button>
+              </div>
+            </div>
+
+            <div class="embed-frame-wrapper">
+              <!-- Giả lập giao diện BI Dashboard chuyên nghiệp -->
+              <div class="mock-bi-dashboard">
+                <div class="mock-bi-kpis">
+                  <div class="mock-kpi-card">
+                    <div class="mock-kpi-label">Tổng chỉ tiêu KPI</div>
+                    <div class="mock-kpi-val">94.8%</div>
+                    <div class="mock-kpi-trend">↑ +3.2% so với kỳ trước</div>
+                  </div>
+                  <div class="mock-kpi-card">
+                    <div class="mock-kpi-label">Dữ liệu hoàn thành</div>
+                    <div class="mock-kpi-val">1,280</div>
+                    <div class="mock-kpi-trend">↑ 100% đúng hạn</div>
+                  </div>
+                  <div class="mock-kpi-card">
+                    <div class="mock-kpi-label">Tỷ lệ chuyển đổi lead</div>
+                    <div class="mock-kpi-val">34.6%</div>
+                    <div class="mock-kpi-trend" style="color:#2563eb;">→ Ổn định</div>
+                  </div>
+                  <div class="mock-kpi-card">
+                    <div class="mock-kpi-label">Số cơ sở ghi nhận</div>
+                    <div class="mock-kpi-val">12</div>
+                    <div class="mock-kpi-trend">Toàn hệ thống</div>
+                  </div>
+                </div>
+
+                <div class="mock-bi-chart-row">
+                  <div class="mock-chart-card">
+                    <div class="mock-chart-title">Biểu đồ tiến độ thực hiện theo tháng (TDS/SKR)</div>
+                    <svg viewBox="0 0 600 180" width="100%" height="180" style="margin-top:auto;">
+                      <polyline fill="none" stroke="#4f46e5" stroke-width="3" points="20,140 100,120 180,130 260,80 340,90 420,40 500,60 580,20"/>
+                      <polyline fill="none" stroke="#e0527a" stroke-width="2" stroke-dasharray="4" points="20,160 100,150 180,140 260,110 340,120 420,90 500,80 580,50"/>
+                      <circle cx="580" cy="20" r="5" fill="#4f46e5"/>
+                      <circle cx="580" cy="50" r="5" fill="#e0527a"/>
+                    </svg>
+                  </div>
+                  <div class="mock-chart-card">
+                    <div class="mock-chart-title">Phân bổ nguồn cơ sở</div>
+                    <div style="flex:1; display:flex; align-items:center; justify-content:center;">
+                      <svg viewBox="0 0 100 100" width="120" height="120">
+                        <circle cx="50" cy="50" r="35" fill="none" stroke="#e2e8f0" stroke-width="16"/>
+                        <circle cx="50" cy="50" r="35" fill="none" stroke="#4f46e5" stroke-width="16" stroke-dasharray="140 220"/>
+                        <circle cx="50" cy="50" r="35" fill="none" stroke="#e0527a" stroke-width="16" stroke-dasharray="60 220" stroke-dashoffset="-140"/>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // -------------------------------------------------------------
+    // 5. EVENT HANDLERS & ROUTING (FR-01, FR-08, BN-01)
+    // -------------------------------------------------------------
+    
+    // Điều hướng trang không reload (SPA History API)
+    function navigate(path, updateHistory = true) {
+      state.currentPath = path;
+      if (updateHistory) {
+        syncUrlState();
+      }
+      renderSidebar();
+      renderContent();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Mở trang chi tiết báo cáo
+    function openReportDetail(reportId) {
+      navigate(`/thu-vien-bao-cao/${reportId}`);
+    }
+
+    // Bấm nút Quay lại: giữ nguyên bộ lọc và từ khóa (FR-08)
+    function backToLibrary() {
+      navigate('/thu-vien-bao-cao');
+    }
+
+    // Bật/tắt lọc theo nhãn nhóm (FR-03)
+    function toggleGroupFilter(groupId) {
+      if (state.selectedGroup === groupId) {
+        state.selectedGroup = null; // Bấm lại lần nữa để bỏ lọc
+      } else {
+        state.selectedGroup = groupId;
+      }
+      
+      // Nếu đang ở trang khác, chuyển về thư viện báo cáo
+      if (state.currentPath !== '/thu-vien-bao-cao') {
+        state.currentPath = '/thu-vien-bao-cao';
+      }
+
+      syncUrlState();
+      renderGroupTags();
+      renderContent();
+    }
+
+    // Xóa toàn bộ bộ lọc
+    function clearAllFilters() {
+      state.selectedGroup = null;
+      state.searchQuery = '';
+      const input = document.getElementById('searchInput');
+      if (input) input.value = '';
+      updateClearBtnVisibility();
+      syncUrlState();
+      renderGroupTags();
+      renderContent();
+    }
+
+    // Đồng bộ trạng thái lên URL (?group=...&q=...) (Điểm cộng BN-01)
+    function syncUrlState() {
+      let url = state.currentPath;
+      if (state.currentPath === '/thu-vien-bao-cao' || state.currentPath === '/') {
+        const params = new URLSearchParams();
+        if (state.selectedGroup) params.set('group', state.selectedGroup);
+        if (state.searchQuery) params.set('q', state.searchQuery);
+        const qStr = params.toString();
+        if (qStr) url += `?${qStr}`;
+      }
+      history.pushState(null, '', url);
+    }
+
+    // Đọc URL khi tải trang hoặc khi bấm Back/Forward trình duyệt
+    function parseUrlState() {
+      const url = new URL(window.location.href);
+      state.currentPath = url.pathname || '/thu-vien-bao-cao';
+      
+      const groupParam = url.searchParams.get('group');
+      const qParam = url.searchParams.get('q') || url.searchParams.get('search');
+      
+      if (groupParam && state.groups.some(g => g.id.toUpperCase() === groupParam.toUpperCase())) {
+        state.selectedGroup = groupParam.toUpperCase();
+      } else {
+        state.selectedGroup = null;
+      }
+
+      state.searchQuery = qParam || '';
+      const searchInput = document.getElementById('searchInput');
+      if (searchInput) searchInput.value = state.searchQuery;
+      updateClearBtnVisibility();
+    }
+
+    function updateClearBtnVisibility() {
+      const btn = document.getElementById('clearSearchBtn');
+      if (btn) btn.style.display = state.searchQuery ? 'block' : 'none';
+    }
+
+    function handleCardKeydown(e, reportId) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openReportDetail(reportId);
+      }
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      return String(text).replace(/[&<>"']/g, m => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      })[m]);
+    }
+
+    // Xử lý nút Thử lại trong FR-09
+    function retryFetchData() {
+      state.hasError = false;
+      state.isLoading = true;
+      renderContent();
+      setTimeout(() => {
+        state.isLoading = false;
+        renderContent();
+      }, 500);
+    }
+
+    // -------------------------------------------------------------
+    // 6. KHỞI TẠO ỨNG DỤNG (INIT)
+    // -------------------------------------------------------------
+    window.addEventListener('DOMContentLoaded', () => {
+      parseUrlState();
+
+      // Render các phần ban đầu
+      renderSidebar();
+      renderGroupTags();
+      renderContent();
+
+      // Sự kiện ô tìm kiếm (FR-06)
+      const searchInput = document.getElementById('searchInput');
+      const clearSearchBtn = document.getElementById('clearSearchBtn');
+      
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          state.searchQuery = e.target.value.trim();
+          updateClearBtnVisibility();
+          
+          if (state.simulateDelay) {
+            state.isLoading = true;
+            renderContent();
+            clearTimeout(window._searchTimer);
+            window._searchTimer = setTimeout(() => {
+              state.isLoading = false;
+              syncUrlState();
+              renderContent();
+            }, 600);
+          } else {
+            syncUrlState();
+            renderContent();
+          }
+        });
+      }
+
+      if (clearSearchBtn) {
+        clearSearchBtn.addEventListener('click', () => {
+          state.searchQuery = '';
+          searchInput.value = '';
+          updateClearBtnVisibility();
+          syncUrlState();
+          renderContent();
+          searchInput.focus();
+        });
+      }
+
+      // Chuyển chế độ Lưới / Danh sách (FR-07)
+      const btnGrid = document.getElementById('btnViewGrid');
+      const btnList = document.getElementById('btnViewList');
+
+      function updateViewModeButtons() {
+        if (state.viewMode === 'grid') {
+          btnGrid.classList.add('active');
+          btnList.classList.remove('active');
+        } else {
+          btnList.classList.add('active');
+          btnGrid.classList.remove('active');
+        }
+      }
+      updateViewModeButtons();
+
+      btnGrid.addEventListener('click', () => {
+        state.viewMode = 'grid';
+        localStorage.setItem('kpi_view_mode', 'grid');
+        updateViewModeButtons();
+        renderContent();
+      });
+
+      btnList.addEventListener('click', () => {
+        state.viewMode = 'list';
+        localStorage.setItem('kpi_view_mode', 'list');
+        updateViewModeButtons();
+        renderContent();
+      });
+
+      // Mobile Menu Toggle
+      const mobileToggle = document.getElementById('mobileMenuToggle');
+      const sidebarNav = document.getElementById('sidebarNav');
+      if (mobileToggle && sidebarNav) {
+        mobileToggle.addEventListener('click', () => {
+          sidebarNav.classList.toggle('open');
+        });
+      }
+
+      // Giả lập trạng thái Demo FR-09
+      const simToggleBtn = document.getElementById('simToggleBtn');
+      const simMenu = document.getElementById('simMenu');
+      const simDelayCheck = document.getElementById('simDelayCheck');
+      const simErrorCheck = document.getElementById('simErrorCheck');
+
+      if (simToggleBtn && simMenu) {
+        simToggleBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          simMenu.classList.toggle('show');
+        });
+
+        document.addEventListener('click', () => {
+          simMenu.classList.remove('show');
+        });
+
+        simDelayCheck.addEventListener('change', (e) => {
+          state.simulateDelay = e.target.checked;
+          if (state.simulateDelay) {
+            state.isLoading = true;
+            renderContent();
+            setTimeout(() => {
+              state.isLoading = false;
+              renderContent();
+            }, 1000);
+          }
+        });
+
+        simErrorCheck.addEventListener('change', (e) => {
+          state.simulateError = e.target.checked;
+          state.hasError = state.simulateError;
+          renderContent();
+        });
+      }
+
+      // Lắng nghe sự kiện Back/Forward của trình duyệt
+      window.addEventListener('popstate', () => {
+        parseUrlState();
+        renderSidebar();
+        renderGroupTags();
+        renderContent();
+      });
+    });
+  </script>
+</body>
+</html>
